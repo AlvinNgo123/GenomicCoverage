@@ -1,9 +1,6 @@
-import csv
-
-
 
 #PART 1: Open read file and fill dictionary with number of visits at each position
-readFileName = "readsTest.csv"
+readFileName = "reads.csv"
 
 inputFile = open(readFileName, "r")
 
@@ -40,29 +37,42 @@ inputFile.close()
 
 
 
-#PART 2: Open loci file and check each position with its value in visitedPositions to get coverage value
-writeFileName = "lociTest.csv"
+#PART 2: Open loci file in read mode and check each position with its value in visitedPositions to get coverage value
+writeFileName = "loci.csv"
 
-outputFile = open(writeFileName, "r+")
+outputReadFile = open(writeFileName, "r")
 
 headerLine = True
-for currentLine in outputFile:
+newFileContent = ""
+for currentLine in outputReadFile:
 
 	if headerLine == True:
 		headerLine = False
 		continue
 
-	currentLine = currentLine.rstrip()
-	thisLine = currentLine.split(',')
+	tempLine = currentLine.rstrip()
+	#print(currentLine)
+	thisLine = tempLine.split(',')
 	position = thisLine[0]
 
-	#Case 1: Position is in visitedPossibilities so we just get its coverage value
+	#Case 1: Position is in visitedPositions so we just get its coverage value
 	#        from the dictionary
-	
+	if int(position) in visitedPositions:
+		thisLine[1] = str(visitedPositions[int(position)]) 
+	#Case 2: Position is NOT in visitedPositions so we set coverage to 0 s
+	#        since we never encountered that position
+	else:
+		thisLine[1] = "0"
 
-	#Case 2: Position is NOT in visitedPossibilities so we set coverage to 0 s
-	#        since we never encountered that position 
+	newLine = thisLine[0] + "," + thisLine[1] + "\n"
+	newFileContent += newLine 
+outputReadFile.close()
 
-outputFile.close()
+
+
+#PART 3: Open loci file in write mode and write the new content(includes coverage val) into it
+outputWriteFile = open(writeFileName, "w")
+outputWriteFile.write(newFileContent)
+outputWriteFile.close()
 
 
